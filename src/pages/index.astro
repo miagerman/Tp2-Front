@@ -8,6 +8,12 @@ const { data: tasks, error } = await supabase
 
 <h1>Lista de tareas</h1>
 
+<form id="taskForm">
+  <input id="title" type="text" placeholder="Título de la tarea" required />
+  <input id="description" type="text" placeholder="Descripción" />
+  <button type="submit">Agregar tarea</button>
+</form>
+
 {error && <p>Error cargando tareas</p>}
 
 <ul>
@@ -17,3 +23,32 @@ const { data: tasks, error } = await supabase
     </li>
   ))}
 </ul>
+
+<script>
+  import { supabase } from '../lib/supabase'
+
+  const form = document.getElementById('taskForm')
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const title = document.getElementById('title').value
+    const description = document.getElementById('description').value
+
+    const { error } = await supabase.from('tasks').insert([
+      {
+        title,
+        description,
+        completed: false
+      }
+    ])
+
+    if (error) {
+      alert('Error al crear tarea')
+      console.error(error)
+      return
+    }
+
+    window.location.reload()
+  })
+</script>
