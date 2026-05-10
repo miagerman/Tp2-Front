@@ -1,20 +1,136 @@
 ---
-import { supabase } from '../lib/supabase'
-
-const { data: tasks } = await supabase
-  .from('tasks')
-  .select('*')
+import '../styles/global.css'
 ---
 
-<h1>Dashboard</h1>
+<main class="dashboard-page">
+  <section class="dashboard-header">
+    <div>
+      <p class="eyebrow">Taskly</p>
+      <h1>Mis tareas</h1>
+      <p>Organiza tus pendientes y guardalos en la nube.</p>
+    </div>
 
-<h2>Tareas</h2>
+    <button class="logout" id="logoutBtn">Cerrar sesion</button>
+  </section>
 
-<ul>
-  {tasks?.map((task) => (
-    <li>
-      <strong>{task.title}</strong>
-      - {task.description}
-    </li>
-  ))}
-</ul>
+  <section class="task-panel">
+    <form class="task-form" id="taskForm">
+      <input class="input" id="title" type="text" placeholder="Titulo de la tarea" required />
+      <input class="input" id="description" type="text" placeholder="Descripcion" />
+      <button class="btn" type="submit">Agregar tarea</button>
+    </form>
+
+    <p class="message" id="message"></p>
+  </section>
+
+  <section class="task-list" id="taskList"></section>
+</main>
+
+<script>
+  import { supabase } from '../lib/supabase.js'
+
+  const taskForm = document.querySelector('#taskForm') as HTMLFormElement
+  const taskList = document.querySelector('#taskList') as HTMLElement
+  const message = document.querySelector('#message') as HTMLParagraphElement
+  const titleInput = document.querySelector('#title') as HTMLInputElement
+  const descriptionInput = document.querySelector('#description') as HTMLInputElement
+  const logoutBtn = document.querySelector('#logoutBtn') as HTMLButtonElement
+
+  const sessionResponse = await supabase.auth.getSession()
+  const session = sessionResponse.data.session
+
+  if (session === null) {
+    window.location.href = '/login'
+  } else {
+    const user = session.user
+
+    async function loadTasks() {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('id', { ascending: false })
+
+     if (error) {
+  message.textContent = error.message
+  console.error(error)
+  return
+}
+
+      taskList.innerHTML = ''
+
+      if (!data || data.length === 0) {
+        taskList.innerHTML = `
+          <article class="empty-card">
+            <h3>No tenes tareas todavia</h3>
+            <p>Agrega tu primera tarea para empezar.</p>
+          </article>
+        `
+        return
+      }
+
+      data.forEach((task) => {
+        const card = document.createElement('article')
+        card.className = 'task-card'
+
+        card.innerHTML = `
+          <div>
+            <h3>${task.title}</h3>
+            <p>${task.description || 'Sin descripcion'}</p>
+          </div>
+
+          <button class="delete-btn" data-id="${task.id}">
+            Borrar
+          </button>
+        `
+
+        taskList.appendChild(card)
+      })
+
+      const deleteButtons = document.querySelectorAll('.delete-btn')
+
+      deleteButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+          const id = button.getAttribute('data-id')
+
+          await supabase
+            .from('tasks')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id)
+
+          loadTasks()
+        })
+      })
+    }
+
+    taskForm.addEventListener('submit', async (event) => {
+      event.preventDefault()
+
+      const { error } = await supabase.from('tasks').insert([
+        {
+          title: titleInput.value,
+          description: descriptionInput.value,
+          completed: false,
+          user_id: user.id
+        }
+      ])
+
+      if (error) {
+        message.textContent = 'Error creando tarea'
+        return
+      }
+
+      taskForm.reset()
+      message.textContent = ''
+      loadTasks()
+    })
+
+    logoutBtn.addEventListener('click', async () => {
+      await supabase.auth.signOut()
+      window.location.href = '/login'
+    })
+
+    loadTasks()
+  }
+</script>

@@ -1,61 +1,44 @@
 ---
+import '../styles/global.css'
 ---
 
-<h1>Registro</h1>
+<main class="page">
+  <section class="card">
+    <h1 class="logo">Crear cuenta</h1>
+    <p class="subtitle">Registrate para guardar tus tareas en la nube.</p>
 
-<form id="registerForm">
-  <input
-    id="email"
-    type="email"
-    placeholder="Email"
-    required
-  />
+    <form id="registerForm">
+      <input class="input" id="email" type="email" placeholder="Email" required />
+      <input class="input" id="password" type="password" placeholder="Contrasena" required />
+      <button class="btn" type="submit">Registrarme</button>
+    </form>
 
-  <br />
-  <br />
+    <a class="btn-secondary" href="/login">Ya tengo cuenta</a>
+    <p class="message" id="message"></p>
+  </section>
+</main>
 
-  <input
-    id="password"
-    type="password"
-    placeholder="Contraseña"
-    required
-  />
+<script>
+  import { supabase } from '../lib/supabase.js'
 
-  <br />
-  <br />
+  const form = document.querySelector('#registerForm') as HTMLFormElement
+  const message = document.querySelector('#message') as HTMLParagraphElement
+  const emailInput = document.querySelector('#email') as HTMLInputElement
+  const passwordInput = document.querySelector('#password') as HTMLInputElement
 
-  <button type="submit">
-    Registrarse
-  </button>
-</form>
-
-<p id="message"></p>
-
-<script type="module">
-  import { supabase } from '../lib/supabase'
-
-  const form = document.querySelector('#registerForm')
-  const message = document.querySelector('#message')
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault()
-
-    const emailInput = document.querySelector('#email')
-    const passwordInput = document.querySelector('#password')
-
-    const email = emailInput.value
-    const password = passwordInput.value
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password
+      email: emailInput.value,
+      password: passwordInput.value
     })
 
     if (error) {
-      message.textContent = error.message
+      message.textContent = 'Error: ' + error.message
       return
     }
 
-    message.textContent = 'Usuario registrado correctamente'
+    message.textContent = 'Cuenta creada. Ahora inicia sesion.'
   })
 </script>

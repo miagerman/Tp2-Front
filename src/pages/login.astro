@@ -18,21 +18,20 @@ import '../styles/global.css'
   </section>
 </main>
 
-<script type="module">
+<script>
   import { supabase } from '../lib/supabase.js'
 
-  const form = document.querySelector('#loginForm')
-  const message = document.querySelector('#message')
+  const form = document.querySelector('#loginForm') as HTMLFormElement
+  const message = document.querySelector('#message') as HTMLParagraphElement
+  const emailInput = document.querySelector('#email') as HTMLInputElement
+  const passwordInput = document.querySelector('#password') as HTMLInputElement
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault()
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
 
-    const email = document.querySelector('#email').value
-    const password = document.querySelector('#password').value
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+    const { error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value,
+      password: passwordInput.value
     })
 
     if (error) {
