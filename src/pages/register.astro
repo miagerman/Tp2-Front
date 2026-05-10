@@ -1,0 +1,61 @@
+---
+---
+
+<h1>Registro</h1>
+
+<form id="registerForm">
+  <input
+    id="email"
+    type="email"
+    placeholder="Email"
+    required
+  />
+
+  <br />
+  <br />
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Contraseña"
+    required
+  />
+
+  <br />
+  <br />
+
+  <button type="submit">
+    Registrarse
+  </button>
+</form>
+
+<p id="message"></p>
+
+<script type="module">
+  import { supabase } from '../lib/supabase'
+
+  const form = document.querySelector('#registerForm')
+  const message = document.querySelector('#message')
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const emailInput = document.querySelector('#email')
+    const passwordInput = document.querySelector('#password')
+
+    const email = emailInput.value
+    const password = passwordInput.value
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password
+    })
+
+    if (error) {
+      message.textContent = error.message
+      return
+    }
+
+    message.textContent = 'Usuario registrado correctamente'
+  })
+</script>

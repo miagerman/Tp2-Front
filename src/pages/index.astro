@@ -1,54 +1,13 @@
 ---
-import { supabase } from '../lib/supabase'
-
-const { data: tasks, error } = await supabase
-  .from('tasks')
-  .select('*')
 ---
 
-<h1>Lista de tareas</h1>
+<h1>Taskly</h1>
 
-<form id="taskForm">
-  <input id="title" type="text" placeholder="Título de la tarea" required />
-  <input id="description" type="text" placeholder="Descripción" />
-  <button type="submit">Agregar tarea</button>
-</form>
+<p>Tu lista de tareas en la nube</p>
 
-{error && <p>Error cargando tareas</p>}
+<a href="/register">Registrarse</a>
 
-<ul>
-  {tasks?.map((task) => (
-    <li>
-      <strong>{task.title}</strong> - {task.description}
-    </li>
-  ))}
-</ul>
+<br />
+<br />
 
-<script>
-  import { supabase } from '../lib/supabase'
-
-  const form = document.getElementById('taskForm')
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault()
-
-    const title = document.getElementById('title').value
-    const description = document.getElementById('description').value
-
-    const { error } = await supabase.from('tasks').insert([
-      {
-        title,
-        description,
-        completed: false
-      }
-    ])
-
-    if (error) {
-      alert('Error al crear tarea')
-      console.error(error)
-      return
-    }
-
-    window.location.reload()
-  })
-</script>
+<a href="/login">Iniciar sesión</a>

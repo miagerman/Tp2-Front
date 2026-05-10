@@ -1,0 +1,20 @@
+---
+import { supabase } from '../lib/supabase'
+
+const { data: tasks } = await supabase
+  .from('tasks')
+  .select('*')
+---
+
+<h1>Dashboard</h1>
+
+<h2>Tareas</h2>
+
+<ul>
+  {tasks?.map((task) => (
+    <li>
+      <strong>{task.title}</strong>
+      - {task.description}
+    </li>
+  ))}
+</ul>
