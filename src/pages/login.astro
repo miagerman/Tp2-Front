@@ -1,0 +1,44 @@
+---
+import '../styles/global.css'
+---
+
+<main class="page">
+  <section class="card">
+    <h1 class="logo">Taskly</h1>
+    <p class="subtitle">Inicia sesion para administrar tus tareas.</p>
+
+    <form id="loginForm">
+      <input class="input" id="email" type="email" placeholder="Email" required />
+      <input class="input" id="password" type="password" placeholder="Contrasena" required />
+      <button class="btn" type="submit">Iniciar sesion</button>
+    </form>
+
+    <a class="btn-secondary" href="/register">Crear una cuenta</a>
+    <p class="message" id="message"></p>
+  </section>
+</main>
+
+<script>
+  import { supabase } from '../lib/supabase.js'
+
+  const form = document.querySelector('#loginForm') as HTMLFormElement
+  const message = document.querySelector('#message') as HTMLParagraphElement
+  const emailInput = document.querySelector('#email') as HTMLInputElement
+  const passwordInput = document.querySelector('#password') as HTMLInputElement
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value,
+      password: passwordInput.value
+    })
+
+    if (error) {
+      message.textContent = 'Email o contrasena incorrectos'
+      return
+    }
+
+    window.location.href = '/dashboard'
+  })
+</script>

@@ -1,0 +1,44 @@
+---
+import '../styles/global.css'
+---
+
+<main class="page">
+  <section class="card">
+    <h1 class="logo">Crear cuenta</h1>
+    <p class="subtitle">Registrate para guardar tus tareas en la nube.</p>
+
+    <form id="registerForm">
+      <input class="input" id="email" type="email" placeholder="Email" required />
+      <input class="input" id="password" type="password" placeholder="Contrasena" required />
+      <button class="btn" type="submit">Registrarme</button>
+    </form>
+
+    <a class="btn-secondary" href="/login">Ya tengo cuenta</a>
+    <p class="message" id="message"></p>
+  </section>
+</main>
+
+<script>
+  import { supabase } from '../lib/supabase.js'
+
+  const form = document.querySelector('#registerForm') as HTMLFormElement
+  const message = document.querySelector('#message') as HTMLParagraphElement
+  const emailInput = document.querySelector('#email') as HTMLInputElement
+  const passwordInput = document.querySelector('#password') as HTMLInputElement
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+
+    const { error } = await supabase.auth.signUp({
+      email: emailInput.value,
+      password: passwordInput.value
+    })
+
+    if (error) {
+      message.textContent = 'Error: ' + error.message
+      return
+    }
+
+    message.textContent = 'Cuenta creada. Ahora inicia sesion.'
+  })
+</script>
