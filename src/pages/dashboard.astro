@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import Footer from "../components/Footer.astro";
 ---
 
 <main class="dashboard-page">
@@ -25,7 +26,8 @@ import '../styles/global.css'
 
   <section class="task-list" id="taskList"></section>
 </main>
-
+ <Footer />
+ 
 <script>
   import { supabase } from '../lib/supabase.js'
 
