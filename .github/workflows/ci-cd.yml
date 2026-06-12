@@ -1,0 +1,36 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar tests unitarios
+        run: npm run test
+
+      - name: Instalar Playwright
+        run: npx playwright install --with-deps
+
+      - name: Ejecutar tests E2E
+        run: npm run test:e2e
+
+      - name: Build
+        run: npm run build
