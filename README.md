@@ -1,9 +1,16 @@
 # Tp2-Front
  
 Nuestro trabajo es una mini app de lista de tareas con el objetivo de permitir que cada usuario se registre, inicie sesión y administre sus propias tareas, guardándolas en una base de datos en la nube. Mia hizo el back y benja el front.
+
+
  imp hacer 
- npm install -D @playwright/test
+ correr esto 
+
+  npm install -D @playwright/test
 npx playwright install 
+
+
+despues en package.json poneer eso 
 "scripts": {
   "dev": "astro dev",
   "build": "astro build",

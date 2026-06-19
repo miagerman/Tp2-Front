@@ -9,8 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro", 
-    "test": "vitest run"
+    "astro": "astro",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
@@ -21,6 +22,10 @@
     "sharp": "^0.34.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "npm": "^11.17.0",
+    "run": "^1.5.0",
+    "test": "^3.3.0",
     "vitest": "^4.1.8"
   }
 }
